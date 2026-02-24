@@ -12,24 +12,32 @@ export default function Home() {
     const [loading, setLoading] = useState(false);
     const [recomendacoes, setRecomendacoes] = useState<string | null>(null);
     const [erro, setErro] = useState<string | null>(null);
-    const [copiado, setCopiado] = useState(false); // Estado para feedback de cópia
+    const [copiado, setCopiado] = useState(false);
 
-    // Função para copiar os dados formatados
+    // Paleta de Cores definida
+    const colors = {
+        primary: "#21B5BF",
+        secondary: "#329096",
+        accent: "#00DBEB",
+        darkTeal: "#36686B",
+        deepGray: "#2B3E40",
+        background: "#2B3233"
+    };
+
     const handleCopy = () => {
         const dados = separarDadosMusicais();
         if (!dados) return;
 
-        const textoParaCopiar = `🎵 Minhas Recomendações MuseAI:\n\n` +
+        const textoParaCopiar = `🎵 Minhas Recomendações VibeSync:\n\n` +
             `Perfil: ${dados.descricao}\n\n` +
             dados.lista.map(item => `- ${item.item} (${item.artista}): ${item.porque}`).join('\n\n');
 
         navigator.clipboard.writeText(textoParaCopiar).then(() => {
             setCopiado(true);
-            setTimeout(() => setCopiado(false), 2000); // Volta ao normal após 2s
+            setTimeout(() => setCopiado(false), 2000);
         });
     };
 
-    // Função para resetar o estado da aplicação
     const handleReset = () => {
         setPlaylistUrl("");
         setRecomendacoes(null);
@@ -41,7 +49,6 @@ export default function Home() {
         return regex.test(url);
     };
 
-    // Função para extrair apenas o ID da Playlist
     const extrairPlaylistId = (url: string) => {
         const regex = /[&?]list=([a-zA-Z0-9_-]+)/;
         const match = url.match(regex);
@@ -51,20 +58,13 @@ export default function Home() {
     const handleGenerateDiscovery = async () => {
         setErro(null);
         if (!playlistUrl.trim()) {
-            setErro("O campo está vazio. Insira um link para receber recomendações.");
+            setErro("O campo está vazio. Insira um link.");
             return;
         }
 
-        // 3. Extração do ID
         const playlistId = extrairPlaylistId(playlistUrl);
-
-        if (!playlistId) {
-            setErro("Não encontramos um ID de playlist válido no link fornecido.");
-            return;
-        }
-
-        if (!validarLinkYoutube(playlistUrl)) {
-            setErro("Link inválido. Certifique-se de que é um link de PLAYLIST do YouTube.");
+        if (!playlistId || !validarLinkYoutube(playlistUrl)) {
+            setErro("Link inválido. Certifique-se de que é uma PLAYLIST do YouTube.");
             return;
         }
 
@@ -96,128 +96,153 @@ export default function Home() {
     const dadosProcessados = separarDadosMusicais();
 
     return (
-        <div style={{ padding: '20px', fontFamily: 'sans-serif', maxWidth: '800px', margin: '0 auto', color: '#333' }}>
-            <header style={{ textAlign: 'center', marginBottom: '40px' }}>
-                <h1 style={{ fontSize: '2.5rem', marginBottom: '10px', color: '#0070f3' }}>🎵 MuseAI</h1>
-                <p style={{ color: '#666' }}>Sua próxima música favorita está a um link de distância.</p>
-            </header>
-            
-            <div style={{ marginBottom: '10px', display: 'flex', gap: '10px' }}>
-                <input 
-                    type="text" 
-                    placeholder="Cole o link da sua playlist aqui..." 
-                    value={playlistUrl}
-                    onChange={(e) => setPlaylistUrl(e.target.value)}
-                    disabled={loading || !!dadosProcessados}
-                    style={{
-                        flex: 1,
-                        padding: '14px',
-                        borderRadius: '12px',
-                        border: erro ? '2px solid #ff4d4f' : '1px solid #ddd',
-                        fontSize: '16px',
-                        backgroundColor: (loading || dadosProcessados) ? '#f5f5f5' : '#fff',
-                        outline: 'none'
-                    }}
-                />
+        <div style={{ 
+            minHeight: '100vh',
+            background: `linear-gradient(135deg, ${colors.deepGray} 0%, ${colors.darkTeal} 50%, ${colors.background} 100%)`,
+            padding: '40px 20px', 
+            fontFamily: 'sans-serif', 
+            color: '#fff' 
+        }}>
+            <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+                <header style={{ textAlign: 'center', marginBottom: '40px' }}>
+                    <h1 style={{
+                        fontSize: '3rem',
+                        marginBottom: '10px',
+                        color: colors.accent,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '15px'
+                    }}>
+                        <img src="/VibeSyncLogo.png" alt="Logo" style={{ height: '1.2em' }} />
+                        VibeSync
+                    </h1>
+                    <p style={{ color: colors.primary, fontSize: '1.1rem' }}>Sua próxima música favorita está a um link de distância.</p>
+                </header>
                 
-                {!dadosProcessados ? (
-                    <button 
-                        onClick={handleGenerateDiscovery} 
-                        disabled={loading}
+                <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+                    <input 
+                        type="text" 
+                        placeholder="Cole o link da sua playlist aqui..." 
+                        value={playlistUrl}
+                        onChange={(e) => setPlaylistUrl(e.target.value)}
+                        disabled={loading || !!dadosProcessados}
                         style={{
-                            padding: '0 30px',
-                            backgroundColor: loading ? '#ccc' : '#0070f3',
+                            flex: 1,
+                            padding: '16px',
+                            borderRadius: '12px',
+                            border: erro ? '2px solid #ff4d4f' : `1px solid ${colors.secondary}`,
+                            fontSize: '16px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
                             color: '#fff',
-                            border: 'none',
-                            borderRadius: '12px',
-                            cursor: loading ? 'not-allowed' : 'pointer',
-                            fontWeight: 'bold'
+                            outline: 'none'
                         }}
-                    >
-                        {loading ? "Analisando..." : "Explorar"}
-                    </button>
-                ) : (
-                    <button 
-                        onClick={handleReset} 
-                        style={{
-                            padding: '0 30px',
-                            backgroundColor: '#f0f0f0',
-                            color: '#333',
-                            border: '1px solid #ddd',
-                            borderRadius: '12px',
-                            cursor: 'pointer',
-                            fontWeight: 'bold'
-                        }}
-                    >
-                        Nova Busca
-                    </button>
-                )}
-            </div>
-
-            {erro && <p style={{ color: '#ff4d4f', fontSize: '0.9em', textAlign: 'center', marginTop: '10px' }}>⚠️ {erro}</p>}
-
-            <hr style={{ margin: '40px 0', border: '0', borderTop: '1px solid #eee' }} />
-
-            {/* EMPTY STATE & LOADING (mantenha como no código anterior) */}
-
-            {/* RESULTADOS */}
-            {dadosProcessados && !loading && (
-                <div className="fade-in">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                        <h3 style={{ margin: 0 }}>Resultados</h3>
+                    />
+                    
+                    {!dadosProcessados ? (
                         <button 
-                            onClick={handleCopy}
+                            onClick={handleGenerateDiscovery} 
+                            disabled={loading}
                             style={{
-                                padding: '8px 16px',
-                                backgroundColor: copiado ? '#4caf50' : '#0070f3',
-                                color: 'white',
+                                padding: '0 30px',
+                                backgroundColor: loading ? colors.darkTeal : colors.primary,
+                                color: '#fff',
                                 border: 'none',
-                                borderRadius: '20px',
-                                cursor: 'pointer',
-                                fontSize: '0.85em',
-                                transition: 'all 0.3s ease'
+                                borderRadius: '12px',
+                                cursor: loading ? 'not-allowed' : 'pointer',
+                                fontWeight: 'bold',
+                                transition: '0.3s'
                             }}
                         >
-                            {copiado ? "✅ Copiado!" : "📋 Copiar Lista"}
+                            {loading ? "Analisando..." : "Explorar"}
                         </button>
-                    </div>
-
-                    <section style={{ marginBottom: '30px', padding: '20px', backgroundColor: '#f0f7ff', borderRadius: '15px', borderLeft: '6px solid #0070f3' }}>
-                        <p style={{ margin: 0, lineHeight: '1.6' }}><strong>Seu Perfil:</strong> {dadosProcessados.descricao}</p>
-                    </section>
-
-                    <div style={{ display: 'grid', gap: '20px' }}>
-                        {dadosProcessados.lista.map((musica, index) => (
-        <div 
-            key={index} 
-            style={{
-                padding: '20px',
-                borderRadius: '15px',
-                border: '1px solid #eee',
-                backgroundColor: '#fff',
-                boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
-                transition: 'transform 0.2s'
-            }}
-        >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div>
-                    <h4 style={{ margin: '0 0 5px 0', color: '#0070f3', fontSize: '1.2rem' }}>
-                        {musica.item}
-                    </h4>
-                    <p style={{ margin: '0 0 10px 0', fontWeight: 'bold', color: '#555' }}>
-                        {musica.artista}
-                    </p>
+                    ) : (
+                        <button 
+                            onClick={handleReset} 
+                            style={{
+                                padding: '0 30px',
+                                backgroundColor: 'transparent',
+                                color: '#fff',
+                                border: `2px solid ${colors.secondary}`,
+                                borderRadius: '12px',
+                                cursor: 'pointer',
+                                fontWeight: 'bold'
+                            }}
+                        >
+                            Nova Busca
+                        </button>
+                    )}
                 </div>
-                <span style={{ fontSize: '1.5rem' }}>🎧</span>
+
+                {erro && <p style={{ color: '#ff4d4f', textAlign: 'center' }}>⚠️ {erro}</p>}
+
+                <hr style={{ margin: '40px 0', border: '0', borderTop: `1px solid ${colors.darkTeal}`, opacity: 0.5 }} />
+
+                {dadosProcessados && !loading && (
+                    <div className="fade-in">
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                            <h3 style={{ margin: 0, color: colors.accent }}>Descobertas para você</h3>
+                            <button 
+                                onClick={handleCopy}
+                                style={{
+                                    padding: '10px 20px',
+                                    backgroundColor: copiado ? '#4caf50' : colors.secondary,
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '25px',
+                                    cursor: 'pointer',
+                                    fontWeight: '600'
+                                }}
+                            >
+                                {copiado ? "✅ Copiado!" : "📋 Copiar Lista"}
+                            </button>
+                        </div>
+
+                        <section style={{ 
+                            marginBottom: '30px', 
+                            padding: '25px', 
+                            backgroundColor: 'rgba(33, 181, 191, 0.1)', 
+                            borderRadius: '15px', 
+                            borderLeft: `6px solid ${colors.primary}` 
+                        }}>
+                            <p style={{ margin: 0, lineHeight: '1.6', fontSize: '1.1rem' }}>
+                                <strong style={{ color: colors.accent }}>Seu Perfil:</strong> {dadosProcessados.descricao}
+                            </p>
+                        </section>
+
+                        <div style={{ display: 'grid', gap: '20px' }}>
+                            {dadosProcessados.lista.map((musica, index) => (
+                                <div 
+                                    key={index} 
+                                    style={{
+                                        padding: '20px',
+                                        borderRadius: '15px',
+                                        backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                                        border: `1px solid ${colors.darkTeal}`,
+                                        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
+                                        backdropFilter: 'blur(4px)'
+                                    }}
+                                >
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <div>
+                                            <h4 style={{ margin: '0 0 5px 0', color: colors.accent, fontSize: '1.3rem' }}>
+                                                {musica.item}
+                                            </h4>
+                                            <p style={{ margin: '0 0 10px 0', fontWeight: 'bold', color: colors.primary }}>
+                                                {musica.artista}
+                                            </p>
+                                        </div>
+                                        <span style={{ fontSize: '1.8rem', opacity: 0.7 }}>🎧</span>
+                                    </div>
+                                    <p style={{ margin: 0, fontSize: '0.95rem', color: '#ccc', fontStyle: 'italic', borderTop: `1px solid ${colors.darkTeal}`, paddingTop: '10px' }}>
+                                        "{musica.porque}"
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
-            <p style={{ margin: 0, fontSize: '0.9rem', color: '#666', fontStyle: 'italic' }}>
-                " {musica.porque} "
-            </p>
-        </div>
-    ))}
-                    </div>
-                </div>
-            )}
         </div>
     );
 }
