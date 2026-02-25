@@ -10,7 +10,7 @@ interface RespostaGemini {
   recomendacoes: Recomendacao[];
 }
 
-
+//Limpa e extrai os dados do JSON gerado pela Gemini API
 export function extrairDadosMusical(jsonString: string) {
   try {
     

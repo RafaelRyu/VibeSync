@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Outfit } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -10,6 +10,14 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+
+// Configura a fonte
+const outfit = Outfit({ 
+  subsets: ['latin'],
+  weight: ['400'], // Escolha os pesos que vai usar
+  variable: '--font-outfit',
 });
 
 export const metadata: Metadata = {
@@ -40,7 +48,7 @@ export default function RootLayout({
     <html lang="en">
       
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${outfit.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
       </body>
