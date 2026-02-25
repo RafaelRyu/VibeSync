@@ -1,6 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // 1. Configuração de Rewrites (Redireciona o tráfego /api para o Python)
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "api/index.py",
+      },
+    ];
+  },
+
+  // 2. Configuração de Headers (Segurança e CSP)
   async headers() {
     return [
       {
@@ -10,7 +21,7 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",  // Next.js precisa
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https://i.scdn.co https://mosaic.scdn.co https://image-cdn-ak.spotifycdn.com https://image-cdn-fa.spotifycdn.com https://lineup-images.scdn.co",
