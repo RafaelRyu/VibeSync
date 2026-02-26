@@ -6,7 +6,7 @@ export async function gerarRecomendacoes(musicas: string[], vibe: string) {
     const apiKey = process.env.API_KEY;
     const InputSchema = z.object({
   musicas: z.array(z.string()).min(1),
-  vibe: z.string().min(1).max(100).transform(v => v.replace(/[<>"{}]/g, ""))
+  vibe: z.string().min(0).max(100).transform(v => v.replace(/[<>"{}]/g, ""))
 });
 
 const validation = InputSchema.safeParse({ musicas: musicas, vibe: vibe });

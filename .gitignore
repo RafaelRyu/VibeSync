@@ -3,6 +3,16 @@
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# Ambiente Virtual
+vibesync_env/
+venv/
+env/
+ENV/
+
+# Arquivos temporários do Python
+__pycache__/
+*.py[cod]
+
 # dependencies
 /node_modules
 /.pnp
