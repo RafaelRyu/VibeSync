@@ -2,7 +2,7 @@ import axios from "axios";
 
 export async function getPlaylist(link: string) {
 
-    const response = await axios.get(`http://127.0.0.1:8000/playlist/${link}`);
+    const response = await axios.get(`https://api-vibesync.vercel.app/playlist/${link}`);
     
     return response.data; // aqui sim você retorna os dados
 }
